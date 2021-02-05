@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <StartupObject>RubbishLanguageFrontEnd.Program</StartupObject>
+    <Authors>kaixa</Authors>
+    <Company>kaixa</Company>
+    <Product>RubbishLanguageCompilerFrontend</Product>
+    <AssemblyName>rbc</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="UnitTest\**" />
+    <EmbeddedResource Remove="UnitTest\**" />
+    <None Remove="UnitTest\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Examples\source1.rbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

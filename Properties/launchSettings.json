@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RubbishLanguageFrontEnd": {
+      "commandName": "Project",
+      "commandLineArgs": "--output result.o ./Examples/source1.rbl"
+    }
+  }
+}

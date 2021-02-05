@@ -1,0 +1,13 @@
+﻿
+# RubbishLanguageFrontend UnitTest
+void modPlus(i64 a, i64 m) {
+if (a == 1)return a;
+	return a% m;
+}
+
+@import   func i64 veryNBFunction  (i64 a,f64 b,str c  );
+
+@entry
+func i64 main(i64 argc, str[] argv) {
+	veryNBFunction(a,114.514, "heng-aaaaaaa");
+	return 0;}
