@@ -1,0 +1,9 @@
+﻿12345678
+0x1234ABCD
+0xABCDEFGH # Lexer considers all token starts with 0x is integer, parser will check it.
+0x123.456
+
+i64 a = 0xcdcdcdcd
+f64 b =.0
+f64 c= 1.
+abcdefg

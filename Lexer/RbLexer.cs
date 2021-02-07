@@ -8,7 +8,7 @@ using RubbishLanguageFrontEnd.Util;
 using RubbishLanguageFrontEnd.Util.SourceReader;
 
 namespace RubbishLanguageFrontEnd.Lexer {
-    public class Lexer {
+    public class RbLexer {
         private static readonly Dictionary<string, TokenType>
             KeywordsAndMultiCharOperators =
                 new Dictionary<string, TokenType> {
@@ -56,7 +56,7 @@ namespace RubbishLanguageFrontEnd.Lexer {
 
         private readonly ProxySourceReader _psReader;
 
-        public Lexer(FileStream inputFile) {
+        public RbLexer(FileStream inputFile) {
             _psReader = new ProxySourceReader(inputFile);
         }
 
@@ -65,7 +65,7 @@ namespace RubbishLanguageFrontEnd.Lexer {
                 _psReader.CurrentColumn);
         }
 
-        private Token NextToken() {
+        public Token NextToken() {
             ProxyReadChar:
 
             _psReader.Read();
@@ -111,7 +111,7 @@ namespace RubbishLanguageFrontEnd.Lexer {
             }
 
 
-            if (Regex.IsMatch(current, @"^((0x[0-9A-Fa-f]+)|([0-9]+))$")) {
+            if (Regex.IsMatch(current, @"^((0x.+)|(\d+))$")) {
                 _psReader.AcceptToLastOne();
 
                 return BuildToken(current, TokenType.ValInt);
@@ -129,7 +129,7 @@ namespace RubbishLanguageFrontEnd.Lexer {
                 return BuildToken(current, TokenType.ValStr);
             }
 
-            if (Regex.IsMatch(current, "[a-zA-Z_][a-zA-Z0-9_]*")) {
+            if (Regex.IsMatch(current, "^[a-zA-Z_][a-zA-Z0-9_]*$")) {
                 _psReader.AcceptToLastOne();
 
                 return BuildToken(current, TokenType.Identifier);

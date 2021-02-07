@@ -101,7 +101,7 @@ namespace RubbishLanguageFrontEnd.Util.SourceReader {
 
     internal class SourceReader : IDisposable {
         private bool _meetCr;
-
+        private bool _provideExtraSpaceWhenEof = true;
         private readonly StreamReader _reader;
 
         public bool EndOfStream => _reader.EndOfStream;
@@ -133,6 +133,11 @@ namespace RubbishLanguageFrontEnd.Util.SourceReader {
         /// </summary>
         /// <returns>The char wrapped in <see cref="ExtendedChar">ExtendedChar</see></returns>
         public ExtendedChar Read() {
+            if (EndOfStream && _provideExtraSpaceWhenEof) {
+                _provideExtraSpaceWhenEof = false;
+                return new ExtendedChar(' ');
+            }
+
             var ch = _reader.Read();
             while (ch == '#') { // ignore comments
                 _reader.ReadLine();
