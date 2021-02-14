@@ -51,9 +51,7 @@ namespace RubbishLanguageFrontEnd.Util.SourceReader {
         }
 
         public bool GotSeparator() {
-            return _parsingStringLiteral
-                ? CurrentChar.IsSpace
-                : CurrentChar.IsSeparateSymbol;
+            return !_parsingStringLiteral && CurrentChar.IsSeparateSymbol;
         }
 
 
