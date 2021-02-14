@@ -1,6 +1,12 @@
 ﻿# RubbishLanguageFrontend
-This is a compiler frontend for my toy language, RubbishLanguage(rblang). This frontend will generate CIL and depends on .Net Core
 
+This is a compiler frontend for my toy language, RubbishLanguage(rblang). This frontend will generate MSIL and depends on .Net Core
+
+---
+
+__Updated at 2021-02-14__
+
+Alright, new plan. This project will interpret source code and generate MSIL, then execute it on CLR. It seems that the new API of AssemblyBuilder does not support saving the CIL to disk, so this project becomes an interpreter.
 ## The Language
 
 ### keywords
@@ -21,23 +27,23 @@ This is a compiler frontend for my toy language, RubbishLanguage(rblang). This f
 14. return
 
 ## operators
-|operator|precedence(the higher, the better)|
-|:---:|:---:|
-|=(assign)|1|
-|or|2|
-|and|3|
-|==|4|
-|<|5|
-|<=|5|
-|>|5|
-|>=|5|
-|+|6|
-|-|6|
-|*(multiplication)|7|
-|/|7|
-|%|7|
-|not|8|
-|address_of|8|
+|     operator      | precedence(the higher, the better) |
+| :---------------: | :--------------------------------: |
+|     =(assign)     |                 1                  |
+|        or         |                 2                  |
+|        and        |                 3                  |
+|        ==         |                 4                  |
+|         <         |                 5                  |
+|        <=         |                 5                  |
+|         >         |                 5                  |
+|        >=         |                 5                  |
+|         +         |                 6                  |
+|         -         |                 6                  |
+| *(multiplication) |                 7                  |
+|         /         |                 7                  |
+|         %         |                 7                  |
+|        not        |                 8                  |
+|    address_of     |                 8                  |
 
 ### attributes
 any token starts with '@'
@@ -47,4 +53,22 @@ any token starts with '@'
 
 ## Progress
 
+__2021-02-05__
+
 Currently, the lexer is finished and the test is passed. But the lexer still has some problems, such as the line/column counter. And char type is not implemented. I think the lexer need more test cases.
+
+---
+
+__2021-02-14__
+
+Implemented a parser, which convert token stream to abstract syntax tree. But I forgot to handle loop statement
+
+## Todo
+
+- [x] Lexer
+- [ ] Parser
+- [ ] Semantic analysis
+- [ ] CodeEmitter
+- [ ] Fix column counting problem for RbLexer
+- [ ] Array types
+- [ ] Dot operator(.) and struct type
