@@ -1,15 +1,17 @@
+#nullable enable
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using RubbishLanguageFrontEnd.Util;
 
-namespace RubbishLanguageFrontEnd.Parser.AST {
-    public class IfElseAstNode : BasicAstNode, IEquatable<IfElseAstNode> {
+namespace RubbishLanguageFrontEnd.AST {
+    public class IfElseAstNode : BasicAstNode {
         public BasicAstNode IfCondition { get; }
         public CodeBlockAstNode IfBlock { get; }
-        [MaybeNull] public CodeBlockAstNode ElseBlock { get; }
+        public CodeBlockAstNode? ElseBlock { get; }
 
         public IfElseAstNode(BasicAstNode cond, CodeBlockAstNode ifBlock,
-            CodeBlockAstNode elseBlock) {
+            CodeBlockAstNode? elseBlock) {
             IfCondition = cond;
             IfBlock = ifBlock;
             ElseBlock = elseBlock;
@@ -31,17 +33,13 @@ namespace RubbishLanguageFrontEnd.Parser.AST {
         }
 
         public bool Equals(IfElseAstNode other) {
-            if (other is null) return false;
-            if (ReferenceEquals(this, other)) return true;
             return Equals(IfCondition, other.IfCondition) &&
                    Equals(IfBlock, other.IfBlock) && Equals(ElseBlock, other.ElseBlock);
         }
 
-        public override bool Equals(object obj) {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((IfElseAstNode) obj);
+        public override bool Equals(object? obj) {
+            return EqualCheckUtil.NotNullAndSameType(this, obj) &&
+                   Equals((IfElseAstNode) obj!);
         }
 
         public override int GetHashCode() {

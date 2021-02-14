@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using RubbishLanguageFrontEnd.Lexer;
-using RubbishLanguageFrontEnd.Parser.AST;
+using RubbishLanguageFrontEnd.AST;
 
 namespace RubbishLanguageFrontEnd.Parser {
     public class Context {

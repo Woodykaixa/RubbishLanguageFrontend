@@ -2,7 +2,7 @@ using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RubbishLanguageFrontEnd.Lexer;
 using RubbishLanguageFrontEnd.Parser;
-using RubbishLanguageFrontEnd.Parser.AST;
+using RubbishLanguageFrontEnd.AST;
 
 namespace UnitTest {
     [TestClass]
@@ -13,16 +13,13 @@ namespace UnitTest {
                 FileMode.Open);
             ILanguageLexer lexer = new RbLexer(sourceStream);
             ILanguageParser parser = new RbParser(lexer);
-            var ast = parser.Parse();
-            BasicAstNode expectedAst = new CodeBlockAstNode(new BasicAstNode[] {
+            var ast = (CodeBlockAstNode) parser.Parse();
+            var expectedAst = new CodeBlockAstNode(new BasicAstNode[] {
                 new FunctionAstNode(
                     new FunctionPrototypeAstNode(
                         new[] {
-                            new FunctionParameter {
-                                Name = "s", Type = FunctionParameter.ParamType.Str
-                            }
-                        }, "WriteLine", FunctionParameter.ParamType.Void,
-                        new[] {"@import"}
+                            new FunctionParameter("str", "s")
+                        }, "WriteLine", "void", new[] {"@import"}
                     ), null
                 ),
                 new VariableDefineAstNode("Str", "greeting",
@@ -30,10 +27,8 @@ namespace UnitTest {
                 new FunctionAstNode(
                     new FunctionPrototypeAstNode(
                         new[] {
-                            new FunctionParameter {
-                                Name = "n", Type = FunctionParameter.ParamType.Int64
-                            }
-                        }, "fib", FunctionParameter.ParamType.Int64, null
+                            new FunctionParameter("i64", "n")
+                        }, "fib", "i64", null
                     ), new CodeBlockAstNode(
                         new BasicAstNode[] {
                             new IfElseAstNode(
@@ -57,10 +52,8 @@ namespace UnitTest {
                 new FunctionAstNode(
                     new FunctionPrototypeAstNode(
                         new[] {
-                            new FunctionParameter {
-                                Name = "s", Type = FunctionParameter.ParamType.Str
-                            }
-                        }, "foo", FunctionParameter.ParamType.Void, null
+                            new FunctionParameter("str", "s")
+                        }, "foo", "i64", null
                     ), new CodeBlockAstNode(new BasicAstNode[] {
                         new FunctionCallingAstNode("WriteLine",
                             new BasicAstNode[] {new IdentifierAstNode("s")}),
@@ -85,7 +78,10 @@ namespace UnitTest {
                 })
             });
 
-            Assert.AreEqual(expectedAst, ast);
+            for (var i = 0; i < expectedAst.Statements.Length; i++) {
+                Assert.AreEqual(expectedAst.Statements[i], ast.Statements[i],
+                    $"\nassert failed at index: {i}\nexpect:\n{expectedAst.Statements[i]}\nactual:\n{ast.Statements[i]}");
+            }
         }
     }
 }

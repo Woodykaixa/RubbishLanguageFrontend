@@ -1,4 +1,4 @@
-using RubbishLanguageFrontEnd.Parser.AST;
+using RubbishLanguageFrontEnd.AST;
 
 namespace RubbishLanguageFrontEnd.Parser {
     public interface ILanguageParser {

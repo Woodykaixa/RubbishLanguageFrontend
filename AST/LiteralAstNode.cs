@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using RubbishLanguageFrontEnd.Lexer;
 
-namespace RubbishLanguageFrontEnd.Parser.AST {
+namespace RubbishLanguageFrontEnd.AST {
     public class LiteralAstNode<T> : BasicAstNode, IEquatable<LiteralAstNode<T>> {
         public T Value { get; }
 

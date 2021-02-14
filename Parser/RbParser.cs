@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RubbishLanguageFrontEnd.AST;
 using RubbishLanguageFrontEnd.Lexer;
-using RubbishLanguageFrontEnd.Parser.AST;
 using RubbishLanguageFrontEnd.Util.Logging;
 
 namespace RubbishLanguageFrontEnd.Parser {
@@ -12,34 +12,32 @@ namespace RubbishLanguageFrontEnd.Parser {
         private Token _previousToken;
         private readonly ErrorLogger _error;
         private readonly Logger _logger;
-        private readonly Context _context;
         public bool HasError => !_error.Empty;
 
-        public static Dictionary<string, int> OperatorPrecedence =
-            new Dictionary<string, int> {
-                {"=", 1},
-                {"or", 2},
-                {"and", 3},
-                {"==", 4},
-                {"<", 5},
-                {"<=", 5},
-                {">", 5},
-                {">=", 5},
-                {"+", 6},
-                {"-", 6},
-                {"*", 7},
-                {"/", 7},
-                {"%", 7},
-                {"not", 8},
-                {"address_of", 8},
-            };
+        public static readonly Dictionary<string, int> OperatorPrecedence = new() {
+            {"=", 1},
+            {"or", 2},
+            {"and", 3},
+            {"==", 4},
+            {"<", 5},
+            {"<=", 5},
+            {">", 5},
+            {">=", 5},
+            {"+", 6},
+            {"-", 6},
+            {"*", 7},
+            {"/", 7},
+            {"%", 7},
+            {"not", 8},
+            {"address_of", 8},
+        };
 
 
-        public static TokenType[] FunctionParameterTypes = {
-            (TokenType) FunctionParameter.ParamType.Int64,
-            (TokenType) FunctionParameter.ParamType.Float64,
-            (TokenType) FunctionParameter.ParamType.Str,
-            (TokenType) FunctionParameter.ParamType.Void
+        public static readonly TokenType[] FunctionParameterTypes = {
+            TokenType.Int64,
+            TokenType.Float64,
+            TokenType.Str,
+            TokenType.Void
         };
 
         public static int GetOperatorPrecedence(string op) {
@@ -54,7 +52,6 @@ namespace RubbishLanguageFrontEnd.Parser {
             _logger = Logger.GetByName("rbc-dev.log");
             _logger.CopyToStdout = true;
             _previousToken = null;
-            _context = new Context();
         }
 
         public BasicAstNode Parse() {
@@ -273,7 +270,7 @@ namespace RubbishLanguageFrontEnd.Parser {
                 return new VariableDefineAstNode(type, name, null);
             }
 
-            var exp = (BinaryOperatorAstNode)ParseExpRhs(0, variable);
+            var exp = (BinaryOperatorAstNode) ParseExpRhs(0, variable);
             return new VariableDefineAstNode(type, name, ParseExpRhs(0, exp.Right));
         }
 
@@ -288,44 +285,21 @@ namespace RubbishLanguageFrontEnd.Parser {
         }
 
         private BasicAstNode ParsePrimary() {
-            BasicAstNode ast;
-            switch (_currentToken.Type) {
-                case TokenType.Identifier:
-                    ast = ParseIdentifier();
-                    break;
-                case TokenType.ValInt:
-                    ast = ParseInteger();
-                    break;
-                case TokenType.ValFloat:
-                    ast = ParseFloat();
-                    break;
-                case TokenType.ValStr:
-                    ast = ParseString();
-                    break;
-                case TokenType.LeftParenthesis:
-                    ast = ParseParenthesis();
-                    break;
-                case TokenType.OpAddress:
-                case TokenType.Not:
-                    ast = ParseUnaryOpExpression();
-                    break;
-                case TokenType.Str:
-                case TokenType.Int64:
-                case TokenType.Float64:
-                    ast = ParseVariableDefine();
-                    break;
-                case TokenType.If:
-                    ast = ParseCondition();
-                    break;
-                case TokenType.Return:
-                    ast = ParseReturn();
-                    break;
-                default:
-                    ast = LogError($"unexpected token, {_currentToken}");
-                    break;
-            }
-
-            return ast;
+            return _currentToken.Type switch {
+                TokenType.Identifier => ParseIdentifier(),
+                TokenType.ValInt => ParseInteger(),
+                TokenType.ValFloat => ParseFloat(),
+                TokenType.ValStr => ParseString(),
+                TokenType.LeftParenthesis => ParseParenthesis(),
+                TokenType.OpAddress => ParseUnaryOpExpression(),
+                TokenType.Not => ParseUnaryOpExpression(),
+                TokenType.Str => ParseVariableDefine(),
+                TokenType.Int64 => ParseVariableDefine(),
+                TokenType.Float64 => ParseVariableDefine(),
+                TokenType.If => ParseCondition(),
+                TokenType.Return => ParseReturn(),
+                _ => LogError($"unexpected token, {_currentToken}")
+            };
         }
 
         private IfElseAstNode ParseCondition() {
@@ -339,7 +313,7 @@ namespace RubbishLanguageFrontEnd.Parser {
             NextToken();
             CodeBlockAstNode ifBlock = null;
             if (_currentToken.Type == TokenType.LeftBrace) {
-                ifBlock = ParseCodeBlock(false);
+                ifBlock = ParseCodeBlock();
             } else {
                 IgnoreThisBlock();
             }
@@ -347,7 +321,7 @@ namespace RubbishLanguageFrontEnd.Parser {
             if (_currentToken.Type == TokenType.Else ||
                 _currentToken.Type == TokenType.Elif) {
                 NextToken();
-                var elseBlock = ParseCodeBlock(false);
+                var elseBlock = ParseCodeBlock();
                 return new IfElseAstNode(cond, ifBlock, elseBlock);
             }
 
@@ -408,7 +382,7 @@ namespace RubbishLanguageFrontEnd.Parser {
                 return null;
             }
 
-            var returnType = _currentToken.Type;
+            var returnType = _currentToken;
             if (!ExpectNextToken(TokenType.Identifier, "expect function name",
                 ignoreAllTokens)) {
                 return null;
@@ -427,17 +401,15 @@ namespace RubbishLanguageFrontEnd.Parser {
                     case TokenType.Int64:
                     case TokenType.Float64:
                     case TokenType.Str:
-                        var paramType = _currentToken.Type;
+                        var paramType = _currentToken;
                         if (!ExpectNextToken(TokenType.Identifier,
                             "expect parameter name", ignoreAllTokens)) {
                             return null;
                         }
 
-                        var paramName = _currentToken.Value;
-                        var functionParameter = new FunctionParameter {
-                            Name = paramName,
-                            Type = (FunctionParameter.ParamType) paramType,
-                        };
+                        var paramName = _currentToken;
+                        var functionParameter =
+                            new FunctionParameter(paramType.Value, paramName.Value);
                         funcParams.Add(functionParameter);
                         break;
                     default:
@@ -462,10 +434,10 @@ namespace RubbishLanguageFrontEnd.Parser {
 
             NextToken(); // eat ')'
             return new FunctionPrototypeAstNode(funcParams.ToArray(), funcName,
-                (FunctionParameter.ParamType) returnType, attributes);
+                returnType.Value, attributes);
         }
 
-        private CodeBlockAstNode ParseCodeBlock(bool hasReturn) {
+        private CodeBlockAstNode ParseCodeBlock() {
             var statementList = new List<BasicAstNode>();
             while (NextToken().Type != TokenType.RightBrace) {
                 var statement = ParsePrimary();
@@ -490,8 +462,7 @@ namespace RubbishLanguageFrontEnd.Parser {
                 return null;
             }
 
-            functionBody =
-                ParseCodeBlock(prototype.ReturnType != FunctionParameter.ParamType.Void);
+            functionBody = ParseCodeBlock();
 
             DefineFunctionAndReturn:
             return new FunctionAstNode(prototype, functionBody);
