@@ -5,54 +5,53 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using RubbishLanguageFrontEnd.Util;
+using RubbishLanguageFrontEnd.Util.Logging;
 using RubbishLanguageFrontEnd.Util.SourceReader;
 
 namespace RubbishLanguageFrontEnd.Lexer {
-    public class RbLexer {
+    public class RbLexer : ILanguageLexer {
         private static readonly Dictionary<string, TokenType>
-            KeywordsAndMultiCharOperators =
-                new Dictionary<string, TokenType> {
-                    {"i64", TokenType.Int64},
-                    {"f64", TokenType.Float64},
-                    {"str", TokenType.Str},
-                    {"void", TokenType.Void},
-                    {"if", TokenType.If},
-                    {"else", TokenType.Else},
-                    {"elif", TokenType.Elif},
-                    {"loop", TokenType.Loop},
-                    {"break", TokenType.Break},
-                    {"continue", TokenType.Continue},
-                    {"and", TokenType.And},
-                    {"or", TokenType.Or},
-                    {"not", TokenType.Not},
-                    {"address_of", TokenType.OpAddress},
-                    {"<=", TokenType.OpLe},
-                    {"==", TokenType.OpEq},
-                    {">=", TokenType.OpGe},
-                    {"func", TokenType.Func},
-                    {"return", TokenType.Return},
-                };
-
-        private static readonly Dictionary<string, TokenType> SingleSymbolTokenMap =
-            new Dictionary<string, TokenType> {
-                {"+", TokenType.OpPlus},
-                {"-", TokenType.OpMinus},
-                {"*", TokenType.OpStar},
-                {"/", TokenType.OpDiv},
-                {"%", TokenType.OpMod},
-                {"<", TokenType.OpLt},
-                {">", TokenType.OpGt},
-                {"=", TokenType.OpAssign},
-                {"(", TokenType.LeftParenthesis},
-                {")", TokenType.RightParenthesis},
-                {"[", TokenType.LeftBracket},
-                {"]", TokenType.RightBracket},
-                {"{", TokenType.LeftBrace},
-                {"}", TokenType.RightBrace},
-                {";", TokenType.Semi},
-                {":", TokenType.Colon},
-                {",", TokenType.Comma}
+            KeywordsAndMultiCharOperators = new() {
+                {"i64", TokenType.Int64},
+                {"f64", TokenType.Float64},
+                {"str", TokenType.Str},
+                {"void", TokenType.Void},
+                {"if", TokenType.If},
+                {"else", TokenType.Else},
+                {"elif", TokenType.Elif},
+                {"loop", TokenType.Loop},
+                {"break", TokenType.Break},
+                {"continue", TokenType.Continue},
+                {"and", TokenType.And},
+                {"or", TokenType.Or},
+                {"not", TokenType.Not},
+                {"address_of", TokenType.OpAddress},
+                {"<=", TokenType.OpLe},
+                {"==", TokenType.OpEq},
+                {">=", TokenType.OpGe},
+                {"func", TokenType.Func},
+                {"return", TokenType.Return},
             };
+
+        private static readonly Dictionary<string, TokenType> SingleSymbolTokenMap = new() {
+            {"+", TokenType.OpPlus},
+            {"-", TokenType.OpMinus},
+            {"*", TokenType.OpStar},
+            {"/", TokenType.OpDiv},
+            {"%", TokenType.OpMod},
+            {"<", TokenType.OpLt},
+            {">", TokenType.OpGt},
+            {"=", TokenType.OpAssign},
+            {"(", TokenType.LeftParenthesis},
+            {")", TokenType.RightParenthesis},
+            {"[", TokenType.LeftBracket},
+            {"]", TokenType.RightBracket},
+            {"{", TokenType.LeftBrace},
+            {"}", TokenType.RightBrace},
+            {";", TokenType.Semi},
+            {":", TokenType.Colon},
+            {",", TokenType.Comma}
+        };
 
         private readonly ProxySourceReader _psReader;
 
@@ -156,6 +155,10 @@ namespace RubbishLanguageFrontEnd.Lexer {
             }
 
             return tokenList.ToArray();
+        }
+
+        public Token[] ParseTokens() {
+            return Parse();
         }
     }
 }
