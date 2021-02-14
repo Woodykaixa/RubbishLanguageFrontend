@@ -69,7 +69,9 @@ namespace RubbishLanguageFrontEnd.Parser {
                         break;
                     case TokenType.Func:
                         ast = ParseFunction(null);
-
+                        break;
+                    case TokenType.Loop:
+                        ast = ParseLoop();
                         break;
                     case TokenType.Int64:
                     case TokenType.Float64:
@@ -206,7 +208,8 @@ namespace RubbishLanguageFrontEnd.Parser {
 
             if (NextToken().Type != TokenType.LeftParenthesis) {
                 // Not function call, just variable
-                return new IdentifierAstNode(idToken.Value);
+                var left = new IdentifierAstNode(idToken.Value);
+                return ParseExpRhs(0, left);
             }
 
             NextToken(); // eat '('
@@ -297,6 +300,7 @@ namespace RubbishLanguageFrontEnd.Parser {
                 TokenType.Int64 => ParseVariableDefine(),
                 TokenType.Float64 => ParseVariableDefine(),
                 TokenType.If => ParseCondition(),
+                TokenType.Loop => ParseLoop(),
                 TokenType.Return => ParseReturn(),
                 _ => LogError($"unexpected token, {_currentToken}")
             };
@@ -326,6 +330,22 @@ namespace RubbishLanguageFrontEnd.Parser {
             }
 
             return new IfElseAstNode(cond, ifBlock, null);
+        }
+
+        private LoopAstNode ParseLoop() {
+            NextToken(); // eat 'loop'
+            if (_currentToken.Type == TokenType.LeftParenthesis) {
+                NextToken(); // eat '(', if current token is not '(', we assume it is condition part;
+            }
+
+            var lhs = ParsePrimary();
+            var cond = ParseExpRhs(0, lhs);
+            if (!ExpectNextToken(TokenType.LeftBrace, "expect '{'", IgnoreThisBlock)) {
+                return null;
+            }
+
+            var body = ParseCodeBlock();
+            return new LoopAstNode(cond, body);
         }
 
         private BasicAstNode ParseExpRhs(int exprPrecedence, BasicAstNode lhs) {

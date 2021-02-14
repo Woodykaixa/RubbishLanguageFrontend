@@ -14,6 +14,9 @@ func i64 fib(i64 n) {
 func i64 foo(str s) {
 	WriteLine(s);
 	i64 isNull = 10 + not address_of s;
+	loop (isNull) {
+		isNull = isNull - 1;
+	}
 	return fib(10);
 }
 
