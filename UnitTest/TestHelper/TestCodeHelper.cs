@@ -1,13 +1,13 @@
+using System;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RubbishLanguageFrontEnd.Lexer;
 
 namespace UnitTest.TestHelper {
     internal static class TestCodeHelper {
-        public static void ParseTokenCode(string sourceFilename, Token[] expectedTokens) {
-            using var source = new FileStream(sourceFilename, FileMode.Open);
-            var lexer = new RbLexer(source);
-            var tokens = lexer.Parse();
+        public static void ParseTokenCode(Token[] expectedTokens,
+            ILanguageLexer lexer) {
+            var tokens = lexer.ParseTokens();
             Assert.AreEqual(expectedTokens.Length, tokens.Length);
             for (var i = 0; i < expectedTokens.Length; i++) {
                 // Assert.AreEqual(expectedTokens[i],tokens[i]);

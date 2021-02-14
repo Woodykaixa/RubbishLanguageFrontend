@@ -1,10 +1,13 @@
 using System;
 using System.IO;
+using RubbishLanguageFrontEnd.CodeGenerator;
 using RubbishLanguageFrontEnd.Lexer;
+using RubbishLanguageFrontEnd.Parser;
 using RubbishLanguageFrontEnd.Util;
+using RubbishLanguageFrontEnd.Util.Logging;
 
 namespace RubbishLanguageFrontEnd {
-    class Commands {
+    internal class Commands {
         public string InputFile;
         public string OutputFile;
         public bool NeedHelp;
@@ -98,18 +101,12 @@ namespace RubbishLanguageFrontEnd {
 
             cmd.OutputFileStream = new FileStream(cmd.OutputFile, FileMode.OpenOrCreate);
             var logger = Logger.GetByName("rbc-dev.log");
-            var lexer = new Lexer.Lexer(cmd.InputFileStream);
-            var tokens = lexer.Parse();
-            ulong line = 1;
             logger.CopyToStdout = true;
-            foreach (var token in tokens) {
-                if (token.SourceLineNumber != line) {
-                    logger.WriteLine();
-                    line = token.SourceLineNumber;
-                }
+            var lexer = new RbLexer(cmd.InputFileStream);
+            var parser = new RbParser(lexer);
+            var codes = parser.Parse();
 
-                logger.Write($"[{token.Value}({token.Type})] ");
-            }
+
         }
     }
 }
