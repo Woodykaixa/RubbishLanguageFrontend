@@ -80,7 +80,7 @@ namespace UnitTest {
                 T.Semi(13, 13),
                 T.RightBrace(13, 14)
             };
-            using var source = new FileStream("TestCode/test1.rbl", FileMode.Open);
+            using var source = new FileStream("TestCode/TestLex1.rbl", FileMode.Open);
             var lexer = new RbLexer(source);
             TestCodeHelper.ParseTokenCode(expectedTokens, lexer);
         }
@@ -106,7 +106,7 @@ namespace UnitTest {
                 T.Token(TokenType.Unknown, "1.", 8, 8),
                 T.Token(TokenType.Identifier, "abcdefg", 9, 1)
             };
-            using var source = new FileStream("TestCode/test2.rbl", FileMode.Open);
+            using var source = new FileStream("TestCode/TestLex2.rbl", FileMode.Open);
             var lexer = new RbLexer(source);
             TestCodeHelper.ParseTokenCode(expectedTokens, lexer);
         }

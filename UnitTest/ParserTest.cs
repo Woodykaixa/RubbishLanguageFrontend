@@ -1,8 +1,10 @@
+using System;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RubbishLanguageFrontEnd.Lexer;
 using RubbishLanguageFrontEnd.Parser;
 using RubbishLanguageFrontEnd.AST;
+using UnitTest.TestHelper;
 
 namespace UnitTest {
     [TestClass]
@@ -13,7 +15,7 @@ namespace UnitTest {
                 FileMode.Open);
             ILanguageLexer lexer = new RbLexer(sourceStream);
             ILanguageParser parser = new RbParser(lexer);
-            var ast = (CodeBlockAstNode) parser.Parse();
+            var actualAst = parser.Parse();
             var expectedAst = new CodeBlockAstNode(new BasicAstNode[] {
                 new FunctionAstNode(
                     new FunctionPrototypeAstNode(
@@ -77,11 +79,67 @@ namespace UnitTest {
                     new IdentifierAstNode("greeting")
                 })
             });
+            var tester = new TestAstHelper(expectedAst, actualAst);
+            tester.Test();
+        }
 
-            for (var i = 0; i < expectedAst.Statements.Length; i++) {
-                Assert.AreEqual(expectedAst.Statements[i], ast.Statements[i],
-                    $"\nassert failed at index: {i}\nexpect:\n{expectedAst.Statements[i]}\nactual:\n{ast.Statements[i]}");
-            }
+        [TestMethod]
+        public void TestParseAst2() {
+            using var sourceStream = new FileStream("TestCode/TestParse2.rbl",
+                FileMode.Open);
+            ILanguageLexer lexer = new RbLexer(sourceStream);
+            ILanguageParser parser = new RbParser(lexer);
+            var actualAst = parser.Parse();
+            var expectedAst = new CodeBlockAstNode(new BasicAstNode[] {
+                new FunctionAstNode(
+                    new FunctionPrototypeAstNode(new FunctionParameter[] {
+                        new("i64", "i")
+                    }, "EatInt", "void", null),
+                    new CodeBlockAstNode(Array.Empty<BasicAstNode>())
+                ),
+                new FunctionAstNode(
+                    new FunctionPrototypeAstNode(Array.Empty<FunctionParameter>(), "foo",
+                        "void", null),
+                    new CodeBlockAstNode(new BasicAstNode[] {
+                        new VariableDefineAstNode("i64", "a", new IntegerAstNode(0)),
+                        new LoopAstNode(new IntegerAstNode(1),
+                            new CodeBlockAstNode(new BasicAstNode[] {
+                                new IfElseAstNode(new BinaryOperatorAstNode("==",
+                                        new BinaryOperatorAstNode("%",
+                                            new IdentifierAstNode("a"),
+                                            new IntegerAstNode(2)),
+                                        new IntegerAstNode(0)),
+                                    new CodeBlockAstNode(new BasicAstNode[]
+                                        {new ContinueAstNode()}
+                                    ),
+                                    null
+                                ),
+                                new FunctionCallingAstNode("EatInt", new BasicAstNode[] {
+                                    new IdentifierAstNode("a")
+                                }),
+                                new IfElseAstNode(new BinaryOperatorAstNode("==",
+                                        new IdentifierAstNode("a"),
+                                        new IntegerAstNode(10)),
+                                    new CodeBlockAstNode(new BasicAstNode[]
+                                        {new BreakAstNode()}), null
+                                )
+                            })
+                        )
+                    })
+                ),
+                new VariableDefineAstNode("i64", "a", new IntegerAstNode(0)),
+                new LoopAstNode(new IntegerAstNode(1),
+                    new CodeBlockAstNode(new BasicAstNode[] {
+                        new IfElseAstNode(new BinaryOperatorAstNode("==",
+                                new IdentifierAstNode("a"), new IntegerAstNode(2)),
+                            new CodeBlockAstNode(new BasicAstNode[] {
+                                new FunctionCallingAstNode("foo", null),
+                                new BreakAstNode()
+                            }), null)
+                    }))
+            });
+            var tester = new TestAstHelper(expectedAst, actualAst);
+            tester.Test();
         }
     }
 }

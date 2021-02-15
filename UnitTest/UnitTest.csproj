@@ -22,13 +22,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="TestCode\test1.rbl">
+    <None Update="TestCode\TestLex1.rbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestCode\test2.rbl">
+    <None Update="TestCode\TestLex2.rbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestCode\TestParse1.rbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestCode\TestParse2.rbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

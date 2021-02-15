@@ -19,7 +19,7 @@ namespace RubbishLanguageFrontEnd.AST {
         public override string ToString() => $"{Type} {Name}";
     }
 
-    public class FunctionPrototypeAstNode {
+    public class FunctionPrototypeAstNode : BasicAstNode {
         public FunctionParameter[] Parameters { get; }
         public string Name { get; }
         public string ReturnType { get; }
@@ -130,16 +130,16 @@ namespace RubbishLanguageFrontEnd.AST {
 
     public class FunctionCallingAstNode : BasicAstNode {
         public string Callee { get; }
-        public BasicAstNode[] Arguments { get; }
+        public BasicAstNode[]? Arguments { get; }
 
         public FunctionCallingAstNode(string prototype,
-            BasicAstNode[] args) {
+            BasicAstNode[]? args) {
             Callee = prototype;
             Arguments = args;
         }
 
         public override string ToString() {
-            if (Arguments.Length == 0) {
+            if (Arguments is null || Arguments.Length == 0) {
                 return $"{Callee}()";
             }
 

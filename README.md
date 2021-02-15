@@ -20,11 +20,13 @@ Alright, new plan. This project will interpret source code and generate MSIL, th
 7. else
 8. elif - else if
 9. loop - just like while in C/C++
-10. and - python style condition operator &&
-11. or - ||
-12. not - !
-13. func
-14. return
+10. break
+11. continue
+12. and - python style condition operator &&
+13. or - ||
+14. not - !
+15. func
+16. return
 
 ## operators
 |     operator      | precedence(the higher, the better) |
@@ -66,7 +68,7 @@ Implemented a parser, which convert token stream to abstract syntax tree. But I 
 ## Todo
 
 - [x] Lexer
-- [ ] Parser
+- [x] Parser
 - [ ] Semantic analysis
 - [ ] CodeEmitter
 - [ ] Fix column counting problem for RbLexer

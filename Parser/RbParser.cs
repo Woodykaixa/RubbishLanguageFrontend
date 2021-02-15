@@ -203,6 +203,16 @@ namespace RubbishLanguageFrontEnd.Parser {
             return new StringAstNode(str);
         }
 
+        private BreakAstNode ParseBreak() {
+            NextToken();
+            return new BreakAstNode();
+        }
+
+        private ContinueAstNode ParseContinue() {
+            NextToken();
+            return new ContinueAstNode();
+        }
+
         private BasicAstNode ParseIdentifier() {
             var idToken = _currentToken;
 
@@ -213,6 +223,10 @@ namespace RubbishLanguageFrontEnd.Parser {
             }
 
             NextToken(); // eat '('
+            if (_currentToken.Type == TokenType.RightParenthesis) {
+                return new FunctionCallingAstNode(idToken.Value, null);
+            }
+
             var paramList = new List<BasicAstNode>();
             do {
                 var param = ParsePrimary();
@@ -262,7 +276,7 @@ namespace RubbishLanguageFrontEnd.Parser {
         }
 
         private BasicAstNode ParseVariableDefine() {
-            var type = _currentToken.Type.ToString();
+            var type = _currentToken.Value;
             ExpectNextToken(TokenType.Identifier, "expect identifier",
                 IgnoreThisLine);
             var name = _currentToken.Value;
@@ -301,6 +315,8 @@ namespace RubbishLanguageFrontEnd.Parser {
                 TokenType.Float64 => ParseVariableDefine(),
                 TokenType.If => ParseCondition(),
                 TokenType.Loop => ParseLoop(),
+                TokenType.Break => ParseBreak(),
+                TokenType.Continue => ParseContinue(),
                 TokenType.Return => ParseReturn(),
                 _ => LogError($"unexpected token, {_currentToken}")
             };
@@ -315,7 +331,7 @@ namespace RubbishLanguageFrontEnd.Parser {
             var lhs = ParsePrimary();
             var cond = ParseExpRhs(0, lhs);
             NextToken();
-            CodeBlockAstNode ifBlock = null;
+            var ifBlock = new CodeBlockAstNode(Array.Empty<BasicAstNode>());
             if (_currentToken.Type == TokenType.LeftBrace) {
                 ifBlock = ParseCodeBlock();
             } else {
@@ -460,6 +476,10 @@ namespace RubbishLanguageFrontEnd.Parser {
         private CodeBlockAstNode ParseCodeBlock() {
             var statementList = new List<BasicAstNode>();
             while (NextToken().Type != TokenType.RightBrace) {
+                while (_currentToken.Type == TokenType.Semi) {
+                    NextToken();
+                }
+
                 var statement = ParsePrimary();
                 statementList.Add(statement);
             }

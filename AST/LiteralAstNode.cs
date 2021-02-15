@@ -31,11 +31,11 @@ namespace RubbishLanguageFrontEnd.AST {
         }
     }
 
-    public class IntegerAstNode : LiteralAstNode<int> {
-        public IntegerAstNode(int value) : base(value) { }
+    public class IntegerAstNode : LiteralAstNode<long> {
+        public IntegerAstNode(long value) : base(value) { }
 
         public static IntegerAstNode FromToken(Token token) {
-            var success = int.TryParse(token.Value, out var value);
+            var success = long.TryParse(token.Value, out var value);
             if (success) {
                 return new IntegerAstNode(value);
             }
