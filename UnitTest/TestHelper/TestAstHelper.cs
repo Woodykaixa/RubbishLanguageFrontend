@@ -30,54 +30,61 @@ namespace UnitTest.TestHelper {
 
             Assert.AreEqual(expect!.GetType(), actual!.GetType());
             var actualType = actual.GetType();
-            if (actualType == typeof(IntegerAstNode)) {
-                TestLiteral((LiteralAstNode<long>) expect, (LiteralAstNode<long>) actual,
-                    traceMessage);
-            } else if (actualType == typeof(FloatAstNode)) {
-                TestLiteral((LiteralAstNode<double>) expect,
-                    (LiteralAstNode<double>) actual, traceMessage);
-            } else if (actualType == typeof(StringAstNode)) {
-                TestLiteral((LiteralAstNode<string>) expect,
-                    (LiteralAstNode<string>) actual, traceMessage);
-            } else if (actualType == typeof(IdentifierAstNode)) {
-                TestIdentifier((IdentifierAstNode) expect, (IdentifierAstNode) actual,
-                    traceMessage);
-            } else if (actualType == typeof(VariableDefineAstNode)) {
-                TestVariableDefine((VariableDefineAstNode) expect,
-                    (VariableDefineAstNode) actual, traceMessage);
-            } else if (actualType == typeof(UnaryOperatorAstNode)) {
-                TestUnaryOpExp((UnaryOperatorAstNode) expect,
-                    (UnaryOperatorAstNode) actual, traceMessage);
-            } else if (actualType == typeof(BinaryOperatorAstNode)) {
-                TestBinaryOpExp((BinaryOperatorAstNode) expect,
-                    (BinaryOperatorAstNode) actual, traceMessage);
-            } else if (actualType == typeof(CodeBlockAstNode)) {
-                TestCodeBlock((CodeBlockAstNode) expect, (CodeBlockAstNode) actual,
-                    traceMessage);
-            } else if (actualType == typeof(ReturnAstNode)) {
-                TestReturn((ReturnAstNode) expect, (ReturnAstNode) actual, traceMessage);
-            } else if (actualType == typeof(IfElseAstNode)) {
-                TestCondition((IfElseAstNode) expect, (IfElseAstNode) actual,
-                    traceMessage);
-            } else if (actualType == typeof(LoopAstNode)) {
-                TestLoop((LoopAstNode) expect, (LoopAstNode) actual, traceMessage);
-            } else if (actualType == typeof(FunctionPrototypeAstNode)) {
-                TestPrototype((FunctionPrototypeAstNode) expect,
-                    (FunctionPrototypeAstNode) actual, traceMessage);
-            } else if (actualType == typeof(FunctionAstNode)) {
-                TestFunction((FunctionAstNode) expect, (FunctionAstNode) actual,
-                    traceMessage);
-            } else if (actualType == typeof(FunctionCallingAstNode)) {
-                TestFunctionCall((FunctionCallingAstNode) expect,
-                    (FunctionCallingAstNode) actual, traceMessage);
-            } else if (actualType == typeof(ContinueAstNode)) {
-                TestKeyword((KeywordAstNode) expect, (KeywordAstNode) actual,
-                    traceMessage);
-            } else if (actualType == typeof(BreakAstNode)) {
-                TestKeyword((BreakAstNode) expect, (BreakAstNode) actual,
-                    traceMessage);
-            } else {
-                throw new Exception($"Unknown AST type: {actualType}");
+            switch (expect) {
+                case IntegerAstNode expectInt:
+                    TestLiteral(expectInt, (LiteralAstNode<long>) actual, traceMessage);
+                    break;
+                case FloatAstNode expectFloat:
+                    TestLiteral(expectFloat, (LiteralAstNode<double>) actual,
+                        traceMessage);
+                    break;
+                case StringAstNode expectStr:
+                    TestLiteral(expectStr, (LiteralAstNode<string>) actual, traceMessage);
+                    break;
+                case IdentifierAstNode expectId:
+                    TestIdentifier(expectId, (IdentifierAstNode) actual, traceMessage);
+                    break;
+                case VariableDefineAstNode expectVar:
+                    TestVariableDefine(expectVar, (VariableDefineAstNode) actual,
+                        traceMessage);
+                    break;
+                case UnaryOperatorAstNode expectUOp:
+                    TestUnaryOpExp(expectUOp, (UnaryOperatorAstNode) actual,
+                        traceMessage);
+                    break;
+                case BinaryOperatorAstNode expectBOp:
+                    TestBinaryOpExp(expectBOp, (BinaryOperatorAstNode) actual,
+                        traceMessage);
+                    break;
+                case CodeBlockAstNode expectCb:
+                    TestCodeBlock(expectCb, (CodeBlockAstNode) actual,
+                        traceMessage);
+                    break;
+                case ReturnAstNode expectRet:
+                    TestReturn(expectRet, (ReturnAstNode) actual, traceMessage);
+                    break;
+                case IfElseAstNode expectCond:
+                    TestCondition(expectCond, (IfElseAstNode) actual, traceMessage);
+                    break;
+                case LoopAstNode expectLoop:
+                    TestLoop(expectLoop, (LoopAstNode) actual, traceMessage);
+                    break;
+                case FunctionPrototypeAstNode expectProto:
+                    TestPrototype(expectProto, (FunctionPrototypeAstNode) actual,
+                        traceMessage);
+                    break;
+                case FunctionAstNode expectFunc:
+                    TestFunction(expectFunc, (FunctionAstNode) actual, traceMessage);
+                    break;
+                case FunctionCallingAstNode expectCall:
+                    TestFunctionCall(expectCall, (FunctionCallingAstNode) actual,
+                        traceMessage);
+                    break;
+                case KeywordAstNode expectKw:
+                    TestKeyword(expectKw, (KeywordAstNode) actual, traceMessage);
+                    break;
+                default:
+                    throw new Exception($"Unknown AST type: {actualType}");
             }
         }
 
