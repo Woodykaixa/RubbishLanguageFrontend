@@ -24,7 +24,7 @@ namespace UnitTest {
                         }, "WriteLine", "void", new[] {"@import"}
                     ), null
                 ),
-                new VariableDefineAstNode("Str", "greeting",
+                new VariableDefineAstNode("str", "greeting",
                     new StringAstNode("\"Hello world!\\nI'm running on CLR!\"")),
                 new FunctionAstNode(
                     new FunctionPrototypeAstNode(
@@ -59,7 +59,7 @@ namespace UnitTest {
                     ), new CodeBlockAstNode(new BasicAstNode[] {
                         new FunctionCallingAstNode("WriteLine",
                             new BasicAstNode[] {new IdentifierAstNode("s")}),
-                        new VariableDefineAstNode("Int64", "isNull",
+                        new VariableDefineAstNode("i64", "isNull",
                             new BinaryOperatorAstNode("+",
                                 new IntegerAstNode(10),
                                 new UnaryOperatorAstNode("not",

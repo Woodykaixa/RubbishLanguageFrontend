@@ -69,9 +69,6 @@ namespace UnitTest.TestHelper {
                 case LoopAstNode expectLoop:
                     TestLoop(expectLoop, (LoopAstNode) actual, traceMessage);
                     break;
-                case FunctionPrototypeAstNode expectProto:
-                    TestPrototype(expectProto, (FunctionPrototypeAstNode) actual,
-                        traceMessage);
                     break;
                 case FunctionAstNode expectFunc:
                     TestFunction(expectFunc, (FunctionAstNode) actual, traceMessage);
@@ -169,7 +166,7 @@ namespace UnitTest.TestHelper {
 
         public void TestFunction(FunctionAstNode expect, FunctionAstNode actual,
             string traceMessage) {
-            TestGeneral(expect.Prototype, actual.Prototype,
+            Assert.AreEqual(expect.Prototype, actual.Prototype,
                 $"{traceMessage} -> Function {expect.Prototype.Name}");
             TestGeneral(expect.Body, actual.Body,
                 $"{traceMessage} -> Function {expect.Prototype.Name} Body");

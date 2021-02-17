@@ -19,7 +19,7 @@ namespace RubbishLanguageFrontEnd.AST {
         public override string ToString() => $"{Type} {Name}";
     }
 
-    public class FunctionPrototypeAstNode : BasicAstNode {
+    public class FunctionPrototypeAstNode {
         public FunctionParameter[] Parameters { get; }
         public string Name { get; }
         public string ReturnType { get; }
