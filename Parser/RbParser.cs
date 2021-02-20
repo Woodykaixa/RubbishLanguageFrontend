@@ -14,6 +14,12 @@ namespace RubbishLanguageFrontEnd.Parser {
         private readonly Logger _logger;
         public bool HasError => !_error.Empty;
 
+        public void PrintError() {
+            if (HasError) {
+                _error.Print();
+            }
+        }
+
         public static readonly Dictionary<string, int> OperatorPrecedence = new() {
             {"=", 1},
             {"or", 2},
@@ -50,7 +56,7 @@ namespace RubbishLanguageFrontEnd.Parser {
             _currentToken = null;
             _error = new ErrorLogger();
             _logger = Logger.GetByName("rbc-dev.log");
-            _logger.CopyToStdout = true;
+            _logger.CopyToStdout = false;
             _previousToken = null;
         }
 

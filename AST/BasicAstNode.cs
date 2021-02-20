@@ -3,8 +3,8 @@ using RubbishLanguageFrontEnd.Util;
 
 namespace RubbishLanguageFrontEnd.AST {
     public class BasicAstNode : IVisitable {
-        public void Accept(IVisitor visitor) {
-            visitor.Visit(this);
+        public void Accept(IAstVisitor astVisitor) {
+            astVisitor.Visit(this);
         }
 
         public override bool Equals(object? obj) {

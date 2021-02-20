@@ -73,17 +73,28 @@ namespace RubbishLanguageFrontEnd {
         }
     }
 
-    internal class UnknownTypeException : Exception {
-        public string TypeName { get; }
+    internal class SemanticException : Exception {
 
-        public UnknownTypeException(string type) {
-            TypeName = type;
+        public SemanticException() { }
+
+        public SemanticException(string message) {
+            Message = message;
         }
+        public override string Message { get; }
 
-        public override string Message => $"unknown type: {TypeName}";
     }
 
-    internal class UndefinedVariableException : Exception {
+    internal class UnknownTypeException : SemanticException {
+        public string Typename { get; }
+
+        public UnknownTypeException(string typename) {
+            Typename = typename;
+        }
+
+        public override string Message => $"unknown type: {Typename}";
+    }
+
+    internal class UndefinedVariableException : SemanticException {
         public string VarName { get; }
 
         public UndefinedVariableException(string variableName) {
@@ -93,7 +104,17 @@ namespace RubbishLanguageFrontEnd {
         public override string Message => $"undefined variable: {VarName}";
     }
 
-    internal class VariableRedefineException : Exception {
+    internal class TypeRedefineException : SemanticException {
+        public string TypeName { get; }
+
+        public TypeRedefineException(string typename) {
+            TypeName = typename;
+        }
+
+        public override string Message => $"type redefined: {TypeName}";
+    }
+
+    internal class VariableRedefineException : SemanticException {
         public string VarName { get; }
 
         public VariableRedefineException(string variableName) {
@@ -101,5 +122,13 @@ namespace RubbishLanguageFrontEnd {
         }
 
         public override string Message => $"variable redefined: {VarName}";
+    }
+
+    internal class WrongTypeException : SemanticException {
+        public override string Message { get; }
+
+        public WrongTypeException(string message) {
+            Message = message;
+        }
     }
 }

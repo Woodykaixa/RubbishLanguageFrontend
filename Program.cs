@@ -1,10 +1,10 @@
-using System;
-using System.IO;
+using RubbishLanguageFrontEnd.AST;
 using RubbishLanguageFrontEnd.CodeGenerator;
 using RubbishLanguageFrontEnd.Lexer;
 using RubbishLanguageFrontEnd.Parser;
-using RubbishLanguageFrontEnd.Util;
 using RubbishLanguageFrontEnd.Util.Logging;
+using System;
+using System.IO;
 
 namespace RubbishLanguageFrontEnd {
     internal class Commands {
@@ -105,8 +105,12 @@ namespace RubbishLanguageFrontEnd {
             var lexer = new RbLexer(cmd.InputFileStream);
             var parser = new RbParser(lexer);
             var codes = parser.Parse();
+            if (parser.HasError) {
+                return;
+            }
 
-
+            var _generator = new ClrIlGenerator(cmd, (CodeBlockAstNode) codes);
+            _generator.Check();
         }
     }
 }
