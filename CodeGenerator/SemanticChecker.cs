@@ -13,63 +13,16 @@ namespace RubbishLanguageFrontEnd.CodeGenerator {
         private bool _functionHasReturn;
         private bool _functionAllPathReturn;
         private string _functionReturnType;
+        private readonly AstVisitorDispatcher _dispatcher;
 
         public SemanticChecker(Context context) {
             _context = context;
             _lang = LanguageInformation.Instance;
+            _dispatcher = new AstVisitorDispatcher(this);
         }
 
         public void Visit(BasicAstNode visitable) {
-            switch (visitable) {
-                case IntegerAstNode expectInt:
-                    Visit(expectInt);
-                    break;
-                case FloatAstNode expectFloat:
-                    Visit(expectFloat);
-                    break;
-                case StringAstNode expectStr:
-                    Visit(expectStr);
-                    break;
-                case IdentifierAstNode expectId:
-                    Visit(expectId);
-                    break;
-                case VariableDefineAstNode expectVar:
-                    Visit(expectVar);
-                    break;
-                case UnaryOperatorAstNode expectUOp:
-                    Visit(expectUOp);
-                    break;
-                case BinaryOperatorAstNode expectBOp:
-                    Visit(expectBOp);
-                    break;
-                case CodeBlockAstNode expectCb:
-                    Visit(expectCb);
-                    break;
-                case ReturnAstNode expectRet:
-                    Visit(expectRet);
-                    break;
-                case IfElseAstNode expectCond:
-                    Visit(expectCond);
-                    break;
-                case LoopAstNode expectLoop:
-                    Visit(expectLoop);
-                    break;
-                case FunctionAstNode expectFunc:
-                    Visit(expectFunc);
-                    break;
-                case FunctionCallingAstNode expectCall:
-                    Visit(expectCall);
-                    break;
-                case BreakAstNode expectBreak:
-                    Visit(expectBreak);
-                    break;
-                case ContinueAstNode expectContinue:
-                    Visit(expectContinue);
-                    break;
-                default:
-                    throw new SemanticException(
-                        $"Unknown AST type: {visitable.GetType()}");
-            }
+            _dispatcher.CallVisitMethod(visitable);
         }
 
         public void Visit(IntegerAstNode visitable) {
