@@ -69,7 +69,6 @@ namespace UnitTest.TestHelper {
                 case LoopAstNode expectLoop:
                     TestLoop(expectLoop, (LoopAstNode) actual, traceMessage);
                     break;
-                    break;
                 case FunctionAstNode expectFunc:
                     TestFunction(expectFunc, (FunctionAstNode) actual, traceMessage);
                     break;
